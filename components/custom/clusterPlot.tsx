@@ -7,7 +7,7 @@ import { ComponentProps } from 'react';
 const Plot = dynamic(() => import('react-plotly.js'), {
     ssr: false,
     loading: () => (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="w-[644px] h-[644px] flex justify-center items-center">
             <LoaderCircle className="animate-spin text-blue-500 w-12 h-12" />
         </div>
     )
@@ -22,13 +22,14 @@ interface ClusteringPlotProps {
 const ClusteringPlot: React.FC<ClusteringPlotProps> = ({ data, labels, selectedCluster }) => {
     // Declare the traces array to hold the filtered data for plotting
     const traces: Array<Partial<ComponentProps<typeof Plot>['data'][0]>> = [];
+    console.log(selectedCluster);
 
     // Loop over each data point and add it to the appropriate trace
     for (let i = 0; i < data.length; i++) {
         const clusterLabel = labels[i];
 
-        // If selectedCluster is null, or this label matches selectedCluster, add the point to the trace
-        if (selectedCluster === null || clusterLabel === selectedCluster) {
+        // Show all clusters if selectedCluster is null, NaN, or if this label matches selectedCluster
+        if (selectedCluster === null || isNaN(selectedCluster) || clusterLabel === selectedCluster) {
             let trace = traces.find((t) => t.name === `Cluster ${clusterLabel}`);
             if (!trace) {
                 trace = {
@@ -51,15 +52,15 @@ const ClusteringPlot: React.FC<ClusteringPlotProps> = ({ data, labels, selectedC
 
     // Return the Plotly component with the traces
     return (
-        <div className="w-full h-full rounded-lg overflow-hidden">
+        <div className="w-full h-full p-2">
             <Plot
-                data={traces} // Plot the filtered traces
+                data={traces}
                 layout={{
-                    showlegend: false, // Disable legend
-                    paper_bgcolor: '#EBEDFB', // Background color
-                    plot_bgcolor: '#EBEDFB', // Plot background color
+                    showlegend: false,
+                    paper_bgcolor: '#F1F1F4',
+                    plot_bgcolor: '#EBEDFB',
                     font: { color: 'black' },
-                    dragmode: 'pan', // Allow panning
+                    dragmode: 'pan',
                     modebar: {
                         orientation: 'h',
                         bgcolor: 'rgba(0,0,0,0)',
@@ -67,6 +68,7 @@ const ClusteringPlot: React.FC<ClusteringPlotProps> = ({ data, labels, selectedC
                         activecolor: '#4169E1',
                     },
                     autosize: true,
+                    margin: { l: 10, r: 10, t: 10, b: 10 }, // Add small margins
                     xaxis: {
                         title: '',
                         showticklabels: false,
@@ -82,13 +84,18 @@ const ClusteringPlot: React.FC<ClusteringPlotProps> = ({ data, labels, selectedC
                 }}
                 config={{
                     responsive: true,
-                    displayModeBar: 'hover',
+                    displayModeBar: false,
                     modeBarButtonsToRemove: ['toImage', 'zoom2d'],
                     modeBarButtonsToAdd: ['resetScale2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'select2d', 'lasso2d'],
                     displaylogo: false,
                     scrollZoom: true,
                 }}
-                style={{ width: "100%", height: "100%" }}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    minHeight: "400px" // Add a minimum height to ensure visibility
+                }}
+                useResizeHandler={true} // Enable responsive resizing
             />
         </div>
     );

@@ -5,6 +5,8 @@ import CustomClusterDropdown from "@/components/custom/clusterDropdown";
 import ClusteringPlot from "@/components/custom/clusterPlot";
 import clusterdata from "@/lib/clusterdata.json";
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import LabeledSlider from '@/components/custom/labelledSlider';
 
 export default function Home() {
   const uniqueClusters = useMemo(() => {
@@ -29,38 +31,61 @@ export default function Home() {
   }, [selectedCluster, clusterdata.paths, clusterdata.labels]);
 
   return (
-    <main className="min-h-screen bg-white p-4">
-      <div className="mx-auto flex gap-12">
+    <main className="min-h-screen bg-white p-2 overflow-hidden">
+      <div className="mx-auto flex flex-col gap-10 relative">
         {/* Cluster Map Graph - Plotly */}
-        <div className="rounded-lg bg-white p-4 border border-white min-w-[644px] transition-all duration-500 ease-in-out">
-          {/* CustomDropdown to select Clusters*/}
-          <CustomClusterDropdown uniqueClusters={uniqueClusters} onSelectCluster={setSelectedCluster} />
-          {/* Plotly Graph */}
-          <div className="w-full mt-4 rounded-lg bg-white">
-            <ClusteringPlot data={clusterdata.tsne} labels={clusterdata.labels} selectedCluster={selectedCluster} />
+        <div className="rounded-lg p-2 w-[644px] h-[644px] relative">
+          <div className="font-semibold tracking-wide">
+            Embedding and Clustering Engine
+          </div>
+          <div className="h-full flex flex-col bg-white">
+            {/* CustomDropdown to select Clusters*/}
+            <CustomClusterDropdown uniqueClusters={uniqueClusters} onSelectCluster={setSelectedCluster} />
+            {/* Plotly Graph */}
+            <div className='pt-2'>
+              <label className="text-sm font-semibold tracking-wide">
+                Interactive Image Cluster
+              </label>
+              <div className="bg-[#F1F1F4] rounded-lg">
+                <ClusteringPlot data={clusterdata.tsne} labels={clusterdata.labels} selectedCluster={selectedCluster} />
+              </div>
+              <LabeledSlider></LabeledSlider>
+            </div>
           </div>
         </div>
 
         {/* Selected Cluster Images */}
         <div
-          className={`rounded-lg bg-black text-white p-4 border border-white min-w-[644px] transition-all duration-500 ease-in-out ${showImages ? 'translate-x-0' : 'translate-x-full'
-            }`}
-        >
-          <div className="mb-4 text-lg font-bold">Images in Cluster {selectedCluster}</div>
-          <div className="grid grid-cols-3 gap-4">
-            {selectedClusterImages.map((imagePath, index) => (
-              <div key={index} className="relative w-full h-48">
-                <Image
-                  src={`/api/image?path=${imagePath}`}
-                  alt={`Image ${index}`}
-                  fill
-                  className="object-contain"
-                />
+          className={`rounded-lg bg-[#F1F1F4] text-black p-4 w-[644px] h-[550px] absolute right-7 transition-all duration-500 ease-in-out 
+          ${showImages ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}>
+
+          {isNaN(selectedCluster as number) ? (
+            <div className="h-full flex items-center justify-center text-lg">
+              Select a Cluster to View Images
+            </div>
+          ) : (
+            <>
+              <div className='flex flex-row justify-between'>
+                <div className="mb-4 text-lg">Images in Cluster {selectedCluster}</div>
+                <div className="mb-4 tracking-wide">Density: {selectedCluster}</div>
               </div>
-            ))}
-          </div>
+              <div className="grid grid-cols-3 gap-[15px] p-[15px] overflow-auto max-h-[480px]">
+                {selectedClusterImages.map((imagePath, index) => (
+                  <div key={index} className="relative aspect-square w-full">
+                    <Image
+                      src={`/${imagePath}`}
+                      alt={`Image ${index}`}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
+      <Button className="bg-[#365AFF] hover:bg-[#2442cc] absolute bottom-3 right-10">Lock & Proceed</Button>
     </main>
   );
 }

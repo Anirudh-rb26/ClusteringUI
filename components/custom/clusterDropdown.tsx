@@ -18,6 +18,7 @@ const CustomClusterDropdown: React.FC<CustomClusterDropdownProps> = ({ uniqueClu
     }
     return (
         <div className="w-full flex justify-center"> {/* Center the dropdown */}
+
             <DropdownMenu>
                 <DropdownMenuTrigger className="w-full p-5 bg-[#F1F1F4] text-black rounded-lg mt-2 text-start flex">
                     {selectedItem}
@@ -42,6 +43,7 @@ const CustomClusterDropdown: React.FC<CustomClusterDropdownProps> = ({ uniqueClu
             </DropdownMenu>
 
         </div>
+
     );
 };
 
