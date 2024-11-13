@@ -32,10 +32,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white p-2 overflow-hidden">
-      <div className="mx-auto flex flex-col gap-10 relative">
+      <div className="mx-auto flex flex-col gap-6 lg:gap-5 relative lg:flex-row lg:items-start lg:justify-center">
         {/* Cluster Map Graph - Plotly */}
-        <div className="rounded-lg p-2 w-[644px] h-[644px] relative">
-          <div className="font-semibold tracking-wide">
+        <div className="rounded-lg p-2 w-full lg:w-[644px] h-[400px] md:h-[500px] lg:h-[644px] relative">
+          <div className="font-semibold tracking-wide text-center lg:text-left">
             Embedding and Clustering Engine
           </div>
           <div className="h-full flex flex-col bg-white">
@@ -43,22 +43,21 @@ export default function Home() {
             <CustomClusterDropdown uniqueClusters={uniqueClusters} onSelectCluster={setSelectedCluster} />
             {/* Plotly Graph */}
             <div className='pt-2'>
-              <label className="text-sm font-semibold tracking-wide">
+              <label className="text-sm font-semibold tracking-wide text-center lg:text-left">
                 Interactive Image Cluster
               </label>
               <div className="bg-[#F1F1F4] rounded-lg">
                 <ClusteringPlot data={clusterdata.tsne} labels={clusterdata.labels} selectedCluster={selectedCluster} />
               </div>
-              <LabeledSlider></LabeledSlider>
+              <LabeledSlider />
             </div>
           </div>
         </div>
 
         {/* Selected Cluster Images */}
         <div
-          className={`rounded-lg bg-[#F1F1F4] text-black p-4 w-[644px] h-[550px] absolute right-7 transition-all duration-500 ease-in-out 
-          ${showImages ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}>
-
+          className={`mr-2 rounded-lg bg-[#F1F1F4] text-black p-3 w-full lg:w-[644px] h-[400px] md:h-[450px] lg:h-[550px] 
+          transition-all duration-500 ease-in-out ${showImages ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}>
           {isNaN(selectedCluster as number) ? (
             <div className="h-full flex items-center justify-center text-lg">
               Select a Cluster to View Images
@@ -69,7 +68,7 @@ export default function Home() {
                 <div className="mb-4 text-lg">Images in Cluster {selectedCluster}</div>
                 <div className="mb-4 tracking-wide">Density: {selectedCluster}</div>
               </div>
-              <div className="grid grid-cols-3 gap-[15px] p-[15px] overflow-auto max-h-[480px]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2 overflow-auto max-h-[300px] sm:max-h-[350px] md:max-h-[400px] lg:max-h-[480px]">
                 {selectedClusterImages.map((imagePath, index) => (
                   <div key={index} className="relative aspect-square w-full">
                     <Image
@@ -85,7 +84,9 @@ export default function Home() {
           )}
         </div>
       </div>
-      <Button className="bg-[#365AFF] hover:bg-[#2442cc] absolute bottom-3 right-10">Lock & Proceed</Button>
+      <Button className="bg-[#365AFF] hover:bg-[#2442cc] fixed bottom-3 right-5 md:right-10">
+        Lock & Proceed
+      </Button>
     </main>
   );
 }
